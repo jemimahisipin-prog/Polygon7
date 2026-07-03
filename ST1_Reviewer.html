@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> Summative Test 1 — Grade 7 Math Reviewer</title>
+<style>
+  :root{
+    --ink:#0F1B33;
+    --blueprint:#16264A;
+    --blueprint-line:#2E4470;
+    --grid:#25396630;
+    --paper:#F4EFE3;
+    --paper-dim:#E7E0CE;
+    --gold:#E8A33D;
+    --coral:#E8604C;
+    --mint:#4FB8A0;
+    --sky:#6FA8DC;
+    --display: 'Fraunces', 'Georgia', serif;
+    --body: 'Space Grotesk','Segoe UI',sans-serif;
+    --mono: 'JetBrains Mono','Courier New',monospace;
+  }
+  @font-face{font-family:'Fraunces';src:local('Georgia');}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      linear-gradient(var(--grid),transparent),
+      repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 32px),
+      repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 32px),
+      var(--blueprint);
+    color:var(--paper);
+    font-family:var(--body);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px 16px;
+  }
+  .app{
+    width:100%;
+    max-width:780px;
+  }
+  header.top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:18px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .brand svg{width:40px;height:40px;flex:none;}
+  .brand h1{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:1.5rem;
+    margin:0;
+    letter-spacing:0.2px;
+  }
+  .brand p{
+    margin:0;
+    font-size:0.78rem;
+    color:var(--sky);
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+  }
+
+  /* protractor dial */
+  .dial{
+    position:relative;
+    width:76px;height:76px;
+    border-radius:50%;
+    background:conic-gradient(var(--gold) calc(var(--pct,0)*1%), var(--blueprint-line) 0);
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .dial::before{
+    content:"";
+    position:absolute;
+    inset:7px;
+    border-radius:50%;
+    background:var(--ink);
+    border:1px solid var(--blueprint-line);
+  }
+  .dial span{
+    position:relative;
+    font-family:var(--mono);
+    font-size:0.85rem;
+    color:var(--paper);
+  }
+
+  .card{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:6px;
+    box-shadow:0 18px 40px -12px rgba(0,0,0,0.55), 0 0 0 1px var(--blueprint-line);
+    overflow:hidden;
+  }
+
+  /* START SCREEN */
+  .start{
+    padding:40px 34px;
+    text-align:left;
+  }
+  .start .eyebrow{
+    font-family:var(--mono);
+    font-size:0.75rem;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--coral);
+    margin:0 0 8px;
+  }
+  .start h2{
+    font-family:var(--display);
+    font-size:2rem;
+    margin:0 0 14px;
+    line-height:1.15;
+  }
+  .start p.lead{
+    margin:0 0 22px;
+    color:#3A3428;
+    line-height:1.55;
+    max-width:52ch;
+  }
+  .topics{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:28px;
+  }
+  .topics span{
+    font-family:var(--mono);
+    font-size:0.72rem;
+    padding:5px 10px;
+    border:1px solid #C9BE9E;
+    border-radius:20px;
+    color:#5A5238;
+  }
+  button.primary{
+    font-family:var(--body);
+    font-weight:600;
+    font-size:1rem;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    padding:14px 26px;
+    border-radius:4px;
+    cursor:pointer;
+    transition:transform 0.15s ease, background 0.15s ease;
+  }
+  button.primary:hover{background:var(--blueprint);transform:translateY(-1px);}
+  button.primary:active{transform:translateY(0px);}
+
+  /* QUIZ SCREEN */
+  .quiz{padding:30px 34px 34px;display:none;}
+  .quiz.active{display:block;}
+  .qmeta{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-family:var(--mono);
+    font-size:0.78rem;
+    color:#7A7255;
+    margin-bottom:6px;
+  }
+  .qmeta .streak{color:var(--coral);font-weight:700;}
+  .progressbar{
+    height:5px;
+    background:var(--paper-dim);
+    border-radius:3px;
+    overflow:hidden;
+    margin-bottom:22px;
+  }
+  .progressbar > div{
+    height:100%;
+    background:var(--gold);
+    width:0%;
+    transition:width 0.35s ease;
+  }
+  .qfig{
+    margin:0 0 18px;
+    display:flex;
+    justify-content:center;
+  }
+  .qtext{
+    font-family:var(--display);
+    font-size:1.28rem;
+    line-height:1.4;
+    margin:0 0 22px;
+  }
+  .choices{
+    display:grid;
+    gap:10px;
+  }
+  .choice{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-align:left;
+    padding:13px 16px;
+    background:#fff;
+    border:1.5px solid #D9D0B4;
+    border-radius:5px;
+    cursor:pointer;
+    font-family:var(--body);
+    font-size:0.98rem;
+    color:var(--ink);
+    transition:border-color 0.12s ease, background 0.12s ease;
+  }
+  .choice:hover{border-color:var(--sky);}
+  .choice .letter{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:0.82rem;
+    width:22px;height:22px;
+    border-radius:50%;
+    border:1.5px solid #C9BE9E;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .choice.correct{background:#E7F5EF;border-color:var(--mint);}
+  .choice.correct .letter{background:var(--mint);border-color:var(--mint);color:#fff;}
+  .choice.wrong{background:#FBEAE7;border-color:var(--coral);}
+  .choice.wrong .letter{background:var(--coral);border-color:var(--coral);color:#fff;}
+  .choice.disabled{pointer-events:none;opacity:0.85;}
+
+  .feedback{
+    margin-top:16px;
+    padding:12px 14px;
+    border-radius:5px;
+    font-size:0.88rem;
+    line-height:1.5;
+    display:none;
+  }
+  .feedback.show{display:block;}
+  .feedback.right{background:#E7F5EF;color:#256B57;}
+  .feedback.wrong{background:#FBEAE7;color:#8C3527;}
+
+  .nextrow{margin-top:20px;text-align:right;}
+  button.next{
+    font-family:var(--mono);
+    font-size:0.85rem;
+    background:transparent;
+    border:1.5px solid var(--ink);
+    color:var(--ink);
+    padding:9px 18px;
+    border-radius:4px;
+    cursor:pointer;
+    display:none;
+  }
+  button.next.show{display:inline-block;}
+  button.next:hover{background:var(--ink);color:var(--paper);}
+
+  /* RESULTS */
+  .results{padding:40px 34px;display:none;text-align:center;}
+  .results.active{display:block;}
+  .resultsDial{width:150px;height:150px;margin:0 auto 20px;}
+  .results h2{font-family:var(--display);font-size:1.9rem;margin:0 0 4px;}
+  .results .grade{
+    font-family:var(--mono);
+    color:var(--coral);
+    font-size:0.95rem;
+    margin:0 0 20px;
+  }
+  .breakdown{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin:0 0 26px;
+  }
+  .breakdown .bd{
+    background:var(--paper-dim);
+    border-radius:5px;
+    padding:14px 8px;
+  }
+  .breakdown .bd b{display:block;font-family:var(--mono);font-size:1.3rem;}
+  .breakdown .bd span{font-size:0.72rem;color:#6b6349;text-transform:uppercase;letter-spacing:1px;}
+  .btnrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  button.ghost{
+    font-family:var(--body);
+    background:transparent;
+    border:1.5px solid var(--ink);
+    color:var(--ink);
+    padding:12px 22px;
+    border-radius:4px;
+    cursor:pointer;
+  }
+  button.ghost:hover{background:var(--ink);color:var(--paper);}
+
+  footer.hint{
+    text-align:center;
+    color:#5C7CB0;
+    font-family:var(--mono);
+    font-size:0.7rem;
+    margin-top:16px;
+    letter-spacing:0.5px;
+  }
+
+  @media (max-width:560px){
+    .start, .quiz, .results{padding:26px 20px;}
+    .start h2{font-size:1.6rem;}
+    .qtext{font-size:1.1rem;}
+    .breakdown{grid-template-columns:repeat(3,1fr);}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 40 40" fill="none">
+        <polygon points="20,3 35,13 30,33 10,33 5,13" stroke="#E8A33D" stroke-width="2" fill="none"/>
+        <circle cx="20" cy="20" r="2.5" fill="#6FA8DC"/>
+        <line x1="20" y1="20" x2="20" y2="3" stroke="#6FA8DC" stroke-width="1"/>
+        <line x1="20" y1="20" x2="35" y2="13" stroke="#6FA8DC" stroke-width="1"/>
+      </svg>
+      <div>
+        <h1>Polygon Protractor</h1>
+        <p>Grade 7 Math &middot; Polygons &amp; Percent</p>
+      </div>
+    </div>
+    <div class="dial" id="headerDial" style="--pct:0"><span id="headerDialText">0%</span></div>
+  </header>
+
+  <div class="card">
+
+    <!-- START -->
+    <section class="start" id="startScreen">
+      <p class="eyebrow">First Summative Reviewer</p>
+      <h2>Every exterior angle finds its way back to 360°.</h2>
+      <p class="lead">Answer 24 questions on polygons, angle sums, and percent. The dial above fills in as you go — same way a polygon's exterior angles always fill a full circle, no matter how many sides it has.</p>
+      <div class="topics">
+        <span>polygon basics</span>
+        <span>convex vs. concave</span>
+        <span>interior &amp; exterior angles</span>
+        <span>regular polygons</span>
+        <span>percent</span>
+      </div>
+      <button class="primary" id="startBtn">Start the Reviewer →</button>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="quiz" id="quizScreen">
+      <div class="qmeta">
+        <span id="qCounter">Question 1 / 24</span>
+        <span class="streak" id="streakText"></span>
+      </div>
+      <div class="progressbar"><div id="progressFill"></div></div>
+      <div class="qfig" id="qFigure"></div>
+      <p class="qtext" id="qText"></p>
+      <div class="choices" id="choicesWrap"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="nextrow"><button class="next" id="nextBtn">Next →</button></div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="results" id="resultsScreen">
+      <div class="dial resultsDial" id="resultDial" style="--pct:0"><span id="resultDialText" style="font-size:1.6rem;">0%</span></div>
+      <h2 id="resultTitle">Nice work!</h2>
+      <p class="grade" id="resultGrade">SCORE SUMMARY</p>
+      <div class="breakdown">
+        <div class="bd"><b id="statCorrect">0</b><span>Correct</span></div>
+        <div class="bd"><b id="statWrong">0</b><span>Missed</span></div>
+        <div class="bd"><b id="statStreak">0</b><span>Best Streak</span></div>
+      </div>
+      <div class="btnrow">
+        <button class="primary" id="retryBtn">Retry Reviewer</button>
+        <button class="ghost" id="reviewBtn">Review Missed Items</button>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="hint">Shade E for "not among choices" doesn't apply here — every question has an exact answer.</footer>
+</div>
+
+<script>
+/* ---------- Question bank (parallel to First Summative Test, Math 7) ---------- */
+const svgNS = "http://www.w3.org/2000/svg";
+
+function fig(paths, vb="0 0 200 160"){
+  return `<svg viewBox="${vb}" width="220" height="176">${paths}</svg>`;
+}
+const S = {
+  stroke:'stroke="#16264A" stroke-width="2.5" fill="none"',
+  fillFaint:'fill="#F4EFE3" stroke="#16264A" stroke-width="2.5"'
+};
+
+const questions = [
+  {
+    text: "You're welding metal rods end to end to frame a window shaped like a pentagon. What is the fewest number of rods you'd need?",
+    choices: ["Three","Four","Five","Six"],
+    correct: 2,
+    exp: "A pentagon has 5 sides, so it takes 5 rods joined end to end to close the frame."
+  },
+  {
+    text: "Could a closed, straight-sided figure ever have only two sides?",
+    choices: ["Yes, it would be a very thin polygon","Yes, if the sides are curved slightly","No — three sides is the fewest that can enclose a region","No — polygons must always have an even number of sides"],
+    correct: 2,
+    exp: "Two straight segments can't enclose a space on their own; three is the minimum, forming a triangle."
+  },
+  {
+    text: "A drone flies once completely around the outer boundary of a garden shaped like an irregular convex heptagon, turning at each corner. Through how many total degrees does it turn?",
+    choices: ["180°","270°","360°","1260°"],
+    correct: 2,
+    exp: "Traveling once around the outside of any convex polygon is one full turn — always 360°, no matter how many corners it has."
+  },
+  {
+    text: "A carpenter needs to mark exact 60° corners while cutting equal-length boards for a regular hexagonal table. Which pair of tools serves this best?",
+    choices: ["A tape measure only","A protractor and a ruler","A paintbrush only","A magnifying glass only"],
+    correct: 1,
+    exp: "The ruler locks in equal side lengths while the protractor locks in equal angles — both are needed to build a regular hexagon accurately."
+  },
+  {
+    text: "Look at the two shapes below. Which one is a polygon?",
+    fig: fig(`
+      <text x="10" y="20" font-size="11" fill="#5A5238">I. Spiral (never closes)</text>
+      <path d="M30,50 Q60,30 70,55 Q75,80 45,80" ${S.stroke}/>
+      <text x="10" y="105" font-size="11" fill="#5A5238">II. Closed straight-edged shape</text>
+      <polygon points="35,120 90,115 100,140 60,150" ${S.stroke}/>
+    `,"0 0 200 160"),
+    choices: ["I only","II only","Both I and II","Neither"],
+    correct: 1,
+    exp: "Shape I is curved and never closes, so it fails both polygon requirements. Shape II is closed with only straight sides, so it counts."
+  },
+  {
+    text: "At one vertex of a polygon, the interior angle and the exterior angle sit side by side on a straight extended line. What must be true of these two angles?",
+    choices: ["They are always congruent","They are complementary","They are vertical angles","They add up to 180°"],
+    correct: 3,
+    exp: "Sitting on a straight line makes them a linear pair, and linear pairs are always supplementary — they total 180°."
+  },
+  {
+    text: "Two students cut out heptagons with equal side lengths, but one shape looks noticeably lopsided while the other looks regular. What most likely explains the difference?",
+    choices: ["Different scissors were used","One student used thicker paper","The lopsided one has unequal angles between sides","The regular one has more sides"],
+    correct: 2,
+    exp: "Equal sides alone don't make a shape look regular — the angles between those sides also have to match."
+  },
+  {
+    text: "How many vertices does an octagon have?",
+    choices: ["Six","Seven","Eight","Nine"],
+    correct: 2,
+    exp: "Octa- means eight, so an octagon has 8 sides and 8 vertices."
+  },
+  {
+    text: "Two angles are supplementary. If one measures 115°, what does the other measure?",
+    choices: ["55°","65°","75°","85°"],
+    correct: 1,
+    exp: "Supplementary angles total 180°, so 180° − 115° = 65°."
+  },
+  {
+    text: "If a store gives a discount of \"40 per hundred,\" what percent discount is that?",
+    choices: ["4%","40%","400%","0.4%"],
+    correct: 1,
+    exp: "Percent means \"per hundred,\" so 40 out of every 100 is 40%."
+  },
+  {
+    text: "A shape has one interior angle measuring 200°. What does this tell you about the shape?",
+    choices: ["It must be a regular polygon","It is convex, since 200° is a large angle","It is concave, since an interior angle exceeds 180°","It cannot be a polygon at all"],
+    correct: 2,
+    exp: "The moment any interior angle goes past 180°, that vertex 'caves in,' which is exactly what makes a polygon concave rather than convex."
+  },
+  {
+    text: "A triangle's exterior angles sum to 360°. If you instead draw a 20-sided convex polygon, what would its exterior angles sum to?",
+    choices: ["A much larger number, since there are more angles","A much smaller number, since each angle is smaller","Still exactly 360°","It depends on whether it's regular"],
+    correct: 2,
+    exp: "This sum never changes with the number of sides — it's always 360° for any convex polygon, triangle or 20-gon alike."
+  },
+  {
+    text: "Two polygons both have 6 congruent sides, but only one is called a regular hexagon. What extra condition must that one meet?",
+    choices: ["It must also have 6 congruent angles","It must be drawn in a single color","It must sit upright on the page","It must have curved corners"],
+    correct: 0,
+    exp: "Congruent sides alone only make a shape equilateral. To be regular, its angles must be congruent too (equiangular)."
+  },
+  {
+    text: "Which of these must be true of every regular polygon, no matter how many sides it has?",
+    choices: ["It has an even number of sides", "Its interior angles always sum to 360°", "It is both equilateral and equiangular", "It is always concave"],
+    correct: 2,
+    exp: "By definition a regular polygon is equilateral (equal sides) and equiangular (equal angles) — that's true for any number of sides."
+  },
+  {
+    text: "A regular polygon's interior angle measures 160°. What is its exterior angle at that same vertex?",
+    choices: ["10°","20°","30°","40°"],
+    correct: 1,
+    exp: "Interior and exterior angles at a vertex are supplementary: 180° − 160° = 20°."
+  },
+  {
+    text: "This quadrilateral-shaped garden bed has three known corner angles: 105°, 80°, and 90°. What kind of polygon is it?",
+    fig: fig(`
+      <polygon points="35,25 155,35 165,120 25,110" ${S.fillFaint}/>
+      <text x="25" y="15" font-size="11">105°</text>
+      <text x="150" y="30" font-size="11">80°</text>
+      <text x="150" y="115" font-size="11">90°</text>
+      <text x="8" y="120" font-size="11">x</text>
+    `),
+    choices: ["Concave pentagon","Convex quadrilateral","Concave quadrilateral","Regular quadrilateral"],
+    correct: 1,
+    exp: "It has 4 sides, and every given angle is under 180°, so it reads as a convex quadrilateral."
+  },
+  {
+    text: "For any four-sided figure, what do all four interior angles add up to?",
+    choices: ["180°","360°","540°","720°"],
+    correct: 1,
+    exp: "Interior angle sum = (n−2)×180°. For a quadrilateral, n=4: (4−2)×180° = 360°."
+  },
+  {
+    text: "In the garden-bed quadrilateral (angles 105°, 80°, 90°, and x), what is x?",
+    choices: ["75°","85°","95°","105°"],
+    correct: 1,
+    exp: "360° − (105°+80°+90°) = 360° − 275° = 85°."
+  },
+  {
+    text: "What is the measure of the exterior angle right next to the 105° interior angle?",
+    choices: ["65°","75°","85°","95°"],
+    correct: 1,
+    exp: "An interior angle and its exterior partner are supplementary: 180° − 105° = 75°."
+  },
+  {
+    text: "A stop sign has 8 equal sides and 8 equal angles, all under 180°. How would you classify it?",
+    fig: fig(`
+      <polygon points="70,10 130,10 170,50 170,110 130,150 70,150 30,110 30,50" ${S.fillFaint}/>
+    `,"0 0 200 160"),
+    choices: ["Convex regular octagon","Concave regular octagon","Convex irregular hexagon","Convex regular decagon"],
+    correct: 0,
+    exp: "8 equal sides, 8 equal angles, and every angle under 180° — that's the definition of a convex regular octagon."
+  },
+  {
+    text: "A different 8-sided sign has sides and angles that all match — but a few angles measure just over 180°. How should it be classified?",
+    choices: ["Convex regular octagon","Concave regular octagon","Convex irregular octagon","Concave irregular octagon"],
+    correct: 1,
+    exp: "Equal sides and equal angles still make it regular, but an angle over 180° makes it concave — so it's a concave regular octagon."
+  },
+  {
+    text: "What do the interior angles of any octagon add up to?",
+    choices: ["720°","1080°","1260°","1440°"],
+    correct: 1,
+    exp: "(n−2)×180° = (8−2)×180° = 6×180° = 1080°."
+  },
+  {
+    text: "For the regular, convex stop-sign octagon, what is the measure of each interior angle?",
+    choices: ["120°","135°","140°","150°"],
+    correct: 1,
+    exp: "1080° total ÷ 8 equal angles = 135° each."
+  },
+  {
+    text: "What is the measure of each exterior angle of that same regular octagon?",
+    choices: ["30°","36°","40°","45°"],
+    correct: 3,
+    exp: "360° ÷ 8 sides = 45° per exterior angle — matches 180° − 135°."
+  },
+  {
+    text: "A jacket originally costs ₱350 and its tag shows a 30% markdown. What is 30% written as a decimal?",
+    choices: ["0.003","0.03","0.3","3.0"],
+    correct: 2,
+    exp: "Move the decimal two places left when converting a percent to a decimal: 30% = 30/100 = 0.3."
+  },
+  {
+    text: "Shop X sells a lamp for ₱300 and raises the price by 20%. Shop Y sells the same lamp for ₱360 and lowers the price by 25%. What is the new price at Shop Y?",
+    choices: ["₱240.00","₱270.00","₱290.00","₱310.00"],
+    correct: 1,
+    exp: "₱360 × (1 − 0.25) = ₱360 × 0.75 = ₱270.00."
+  },
+  {
+    text: "Using the same scenario, what is the new price at Shop X after its 20% increase?",
+    choices: ["₱330.00","₱340.00","₱350.00","₱360.00"],
+    correctOverride: 3,
+    exp: "₱300 × (1 + 0.20) = ₱300 × 1.20 = ₱360.00."
+  },
+  {
+    text: "Comparing Shop X's new price (₱360.00) and Shop Y's new price (₱270.00), which lamp is the better deal — and why?",
+    choices: ["Both end up costing the same", "Shop X, because its starting price was lower", "Shop Y, because its final price is cheaper", "Shop X, because its markup rate looks bigger"],
+    correct: 2,
+    exp: "₱270.00 (Shop Y) is less than ₱360.00 (Shop X), so Shop Y is the better deal."
+  },
+  {
+    text: "A hexagonal frame has five known interior angles: 110°, 140°, 100°, 125°, and 135°. The sixth angle is x. If x = 110°, is the hexagon convex?",
+    fig: fig(`
+      <polygon points="100,10 160,45 160,110 100,150 40,110 40,45" ${S.fillFaint}/>
+      <text x="90" y="6" font-size="10">110°</text>
+      <text x="150" y="45" font-size="10">140°</text>
+      <text x="150" y="115" font-size="10">100°</text>
+      <text x="85" y="150" font-size="10">125°</text>
+      <text x="15" y="115" font-size="10">135°</text>
+      <text x="15" y="45" font-size="10">x</text>
+    `),
+    choices: ["Yes — every angle, including x, is under 180°", "No — x alone pushes the shape past 180°", "Yes — because all sides look equal", "No — a hexagon can only have 5 angles"],
+    correct: 0,
+    exp: "All six angles, 110° among them, stay below 180°, so no vertex caves inward — the hexagon is convex."
+  },
+  {
+    text: "For that hexagon (angles 110°, 140°, 100°, 125°, 135°, and x), what is the actual measure of x?",
+    choices: ["90°","100°","110°","120°"],
+    correct: 2,
+    exp: "Interior angle sum of a hexagon = (6−2)×180° = 720°. So x = 720° − (110+140+100+125+135) = 720° − 610° = 110°."
+  },
+  {
+    text: "What is the supplement of that angle x (x = 110°)?",
+    choices: ["60°","70°","80°","90°"],
+    correct: 1,
+    exp: "180° − 110° = 70°."
+  }
+];
+
+/* ---------- State ---------- */
+let idx = 0;
+let score = 0;
+let streak = 0;
+let bestStreak = 0;
+let missed = [];
+let answered = false;
+
+const startScreen = document.getElementById('startScreen');
+const quizScreen = document.getElementById('quizScreen');
+const resultsScreen = document.getElementById('resultsScreen');
+const qCounter = document.getElementById('qCounter');
+const streakText = document.getElementById('streakText');
+const progressFill = document.getElementById('progressFill');
+const qFigure = document.getElementById('qFigure');
+const qText = document.getElementById('qText');
+const choicesWrap = document.getElementById('choicesWrap');
+const feedback = document.getElementById('feedback');
+const nextBtn = document.getElementById('nextBtn');
+const headerDial = document.getElementById('headerDial');
+const headerDialText = document.getElementById('headerDialText');
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('retryBtn').addEventListener('click', startQuiz);
+document.getElementById('reviewBtn').addEventListener('click', showReview);
+nextBtn.addEventListener('click', nextQuestion);
+
+function startQuiz(){
+  idx = 0; score = 0; streak = 0; bestStreak = 0; missed = [];
+  startScreen.classList.remove('active');
+  startScreen.style.display = 'none';
+  resultsScreen.classList.remove('active');
+  quizScreen.classList.add('active');
+  updateHeaderDial();
+  renderQuestion();
+}
+
+function updateHeaderDial(){
+  const pct = Math.round((idx/questions.length)*100);
+  headerDial.style.setProperty('--pct', pct);
+  headerDialText.textContent = pct + '%';
+}
+
+function renderQuestion(){
+  answered = false;
+  const q = questions[idx];
+  qCounter.textContent = `Question ${idx+1} / ${questions.length}`;
+  streakText.textContent = streak > 1 ? `🔥 ${streak} streak` : '';
+  progressFill.style.width = `${(idx/questions.length)*100}%`;
+  qFigure.innerHTML = q.fig ? q.fig : '';
+  qText.textContent = q.text;
+  feedback.classList.remove('show','right','wrong');
+  feedback.textContent = '';
+  nextBtn.classList.remove('show');
+
+  const letters = ['A','B','C','D'];
+  choicesWrap.innerHTML = '';
+  q.choices.forEach((choiceTxt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice';
+    btn.innerHTML = `<span class="letter">${letters[i]}</span><span>${choiceTxt}</span>`;
+    btn.addEventListener('click', () => selectAnswer(i, btn));
+    choicesWrap.appendChild(btn);
+  });
+}
+
+function selectAnswer(i, btn){
+  if (answered) return;
+  answered = true;
+  const q = questions[idx];
+  const correctIdx = (typeof q.correctOverride === 'number') ? q.correctOverride : q.correct;
+  const allButtons = choicesWrap.querySelectorAll('.choice');
+  allButtons.forEach(b => b.classList.add('disabled'));
+
+  const isRight = i === correctIdx;
+  if (isRight){
+    btn.classList.add('correct');
+    score++;
+    streak++;
+    bestStreak = Math.max(bestStreak, streak);
+    feedback.classList.add('show','right');
+    feedback.textContent = '✓ Correct — ' + q.exp;
+  } else {
+    btn.classList.add('wrong');
+    allButtons[correctIdx].classList.add('correct');
+    streak = 0;
+    missed.push(q);
+    feedback.classList.add('show','wrong');
+    feedback.textContent = '✗ Not quite — ' + q.exp;
+  }
+  nextBtn.classList.add('show');
+}
+
+function nextQuestion(){
+  idx++;
+  updateHeaderDial();
+  if (idx >= questions.length){
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResults(){
+  quizScreen.classList.remove('active');
+  resultsScreen.classList.add('active');
+  const pct = Math.round((score/questions.length)*100);
+  document.getElementById('resultDial').style.setProperty('--pct', pct);
+  document.getElementById('resultDialText').textContent = pct + '%';
+  document.getElementById('statCorrect').textContent = score;
+  document.getElementById('statWrong').textContent = questions.length - score;
+  document.getElementById('statStreak').textContent = bestStreak;
+
+  let title, grade;
+  if (pct >= 90){ title = "Compass-precision work!"; grade = "You clearly know your polygons and percent."; }
+  else if (pct >= 75){ title = "Solid geometry sense."; grade = "A little more review on the missed items and you're set."; }
+  else if (pct >= 50){ title = "Good foundation — keep going."; grade = "Revisit interior/exterior angle formulas and percent basics."; }
+  else { title = "Time for another pass."; grade = "Review the exterior-angle-sum rule and percent conversions first."; }
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultGrade').textContent = grade.toUpperCase();
+
+  document.getElementById('reviewBtn').style.display = missed.length ? 'inline-block' : 'none';
+}
+
+function showReview(){
+  if (!missed.length) return;
+  let html = missed.map((q,i) => {
+    const correctIdx = (typeof q.correctOverride === 'number') ? q.correctOverride : q.correct;
+    return `<div style="text-align:left;margin-bottom:16px;">
+      <p style="font-weight:600;margin:0 0 4px;">${i+1}. ${q.text}</p>
+      <p style="margin:0;color:#256B57;">Correct answer: ${q.choices[correctIdx]}</p>
+      <p style="margin:4px 0 0;color:#5A5238;font-size:0.88rem;">${q.exp}</p>
+    </div>`;
+  }).join('');
+  resultsScreen.innerHTML = `<div style="padding:6px;">
+    <h2 style="font-family:var(--display);margin:0 0 18px;">Review — Missed Items</h2>
+    ${html}
+    <div class="btnrow" style="margin-top:10px;"><button class="primary" id="backRetry">Retry Reviewer</button></div>
+  </div>`;
+  document.getElementById('backRetry').addEventListener('click', () => location.reload());
+}
+</script>
+</body>
+</html>
